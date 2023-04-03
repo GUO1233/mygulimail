@@ -1,0 +1,31 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        #        - id: test_route
+        #          uri: https://www.baidu.com
+        #          predicates:
+        #            - Query=uri,baidu
+        #
+        #        - id: qq_route
+        #          uri: https://www.qq.com
+        #          predicates:
+        #            - Query=uri,qq
+
+        - id: product_route
+          uri: lb://gulimall-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*),/$\{segment}
+        - id: admin_route
+          uri: lb://renren-fast
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /renren-fast/$\{segment}
+
+## 前端项目，/api
+## 路由生效的优先级 是根据配置文件中的上下顺序
+## http://localhost:88/api/captcha.jpg   http://localhost:8080/renren-fast/captcha.jpg
+## http://localhost:88/api/product/category/list/tree http://localhost:10000/product/category/list/tree
